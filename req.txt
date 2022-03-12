@@ -1,0 +1,114 @@
+DormReviewZW
+
+System Requirements
+
+• User can register or login 
+• user can post a dorm containing images, description , 
+• Register a dorm under a college
+• dorm validation from the admin
+• user can search a dorm or search accomodation around college
+• user can apply for accomodation on the platform 
+• user can post a review (comment)
+
+Monetization
+
+• we can sell ad space on the platform of other dorms so that they can rank on number one in terms of search 
+• charge a percentage if the student applies on the platform
+
+Ho can we get College student to come back frequently on the platform
+
+• make a blog section or news section
+• sell college merch 
+• sell other college neccesities on the platform online shop 
+
+All the features
+
+• Dorm review  ( main )
+• online shop
+• Blog and News Link the blog whatsapp  for sharing content
+
+
+DormReview Database Schema
+
+
+College
+• name
+• location  [lat, long],
+address
+• website
+• Buildings [ids]
+
+Building
+• name
+• collageID
+• dorms [dorm ids]
+
+OffCampusAccomodation
+• name
+• loaction
+• house contact datails
+• House details description
+• images []
+• rooms[ roomIds's ]
+
+
+Dorm / room
+• belongsTo ( collegeID / house ID ) 
+• 
+• houseName    
+• room name or number
+• images []
+• description of what it offers
+review
+
+Review
+• dormId
+• userID
+• comment
+• ratting
+• reply   [ String, sticker, ]
+• attachement [png, gif, sticker, emoji]
+• 
+
+user 
+• username
+• email
+• password
+• reviews
+college
+
+
+
+Function
+
+• User registration / login
+• add review , reply, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
