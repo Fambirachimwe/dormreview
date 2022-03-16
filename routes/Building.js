@@ -59,9 +59,12 @@ router.post('/', (req, res, next) => {
 
     // check if the dorms are in the dorms list 
 
+    // validate if the college id exist in the database 
+    //  validate if the dorms has been created
+
     new Building({
         name: name,
-        college: college,
+        college: college,  // id of the college //
         dorms: dorms
     }).save()
     .then(data => {
