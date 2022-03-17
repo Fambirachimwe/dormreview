@@ -151,8 +151,9 @@ router.put('/:cid', isAuth, async (req, res, next) => {
 
 // Delete Building from the List of building in the College Array
 
-//  delete  College image
 
+
+//  delete  College image
 router.delete('/remove_image/:collegeId/:cloudinary_id', upload.array('image') ,async (req, res, next) => {
     const image_id = req.params.cloudinary_id;  // cloudinary image id
     const collegeId = req.params.collegeId
