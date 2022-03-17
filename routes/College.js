@@ -4,6 +4,7 @@ import College from '../model/College.js';
 import { isAuth } from '../util/IsAuth.js';
 import multer from "multer";
 import cloudinary from "../util/cloudinary.js"
+import fs from "fs"
 
 
 const router = express.Router();
@@ -54,7 +55,9 @@ router.post('/', upload.array("image") , async (req, res, next) => {
                 img_url: result.secure_url,
                 cloudinary_id: result.public_id
             }
-            _imgs.push(imgSchema)
+            _imgs.push(imgSchema);
+            fs.unlinkSync(path);  // deleting the file from the server folder
+
 
         }
         
@@ -226,6 +229,7 @@ router.put('/images/:collegeId/:cloudinary_id', upload.single('image') ,async (r
         try {
             
             const result = await college.save(); // delete from database
+            fs.unlinkSync(req.file.path);  // deleting the file from the server folder
             res.json({
                 message: "image updated ",
                 result
