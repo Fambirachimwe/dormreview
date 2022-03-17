@@ -1,4 +1,5 @@
 import 'dotenv/config';
+// import cloudinary from "cloudinary"
 import express from 'express';
 import bodyParser from 'body-parser';
 import userRoutes from './routes/User.js';
@@ -6,15 +7,17 @@ import collegeRoutes from './routes/College.js'
 import buildingRoutes from './routes/Building.js';
 import dormRoutes from './routes/Dorm.js';
 import offCampusRoutes from './routes/OffCampusAccomodation.js';
-import roomRoutes from "./routes/Room.js"
+import roomRoutes from "./routes/Room.js";
+
 
 import mongoose from 'mongoose';
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/myapp', () => {
+mongoose.connect(`${process.env.MONGODB_CONNECTION_URL}`, () => {
     console.log('connected to database')
 })
+
 
 
 // middlewares here

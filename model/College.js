@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+import imageSchema from "./Image.js"
 const Schema = mongoose.Schema;
+
 
 
 const collegeSchema = new Schema({
@@ -17,7 +19,8 @@ const collegeSchema = new Schema({
     },
     address: String,
     website: String,
-    Buildings: [{type: Schema.Types.ObjectId, ref: 'Building'}]
+    Buildings: [{type: Schema.Types.ObjectId, ref: 'Building'}],
+    images: [imageSchema] // collge images
 
 });
 

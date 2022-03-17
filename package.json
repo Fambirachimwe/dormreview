@@ -6,7 +6,7 @@
   "scripts": {
     "redis": "redis-server",
     "server": "nodemon server.js",
-    "dev": "npm run redis && npm run server" 
+    "dev": "npm run redis && npm run server"
   },
   "type": "module",
   "keywords": [],
@@ -16,11 +16,13 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",
     "cloudinary": "^1.28.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.3",
     "morgan": "^1.10.0",
+    "multer": "^1.4.4",
     "redis": "^4.0.4"
   }
 }

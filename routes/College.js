@@ -2,9 +2,12 @@ import 'dotenv/config';
 import express from "express";
 import College from '../model/College.js';
 import { isAuth } from '../util/IsAuth.js';
+import multer from "multer";
+import cloudinary from "../util/cloudinary.js"
 
 
 const router = express.Router();
+const upload = multer({ dest: 'uploads/' })
 
 
 router.get('/', (req, res, next) => {
@@ -33,22 +36,49 @@ router.get('/:cid', (req, res, next) => {
 });
 
 
-router.post('/', isAuth, (req, res, next) => {
+router.post('/', upload.array("image") , async (req, res, next) => {
     const { name, location, address, website } = req.body;
 
-    new College({
-        name: name,
-        location: location,
-        address: address,
-        website: website,
-    }).save().then(data => {
-        res.status(200).json({
-            message: "new College Added",
-            college: data
-        });
-    }).catch(err => {
-        res.send(err)
-    })
+    const _imgs = [];
+    const files = req.files;
+
+
+    try{
+
+        for( const file of files){
+
+            const {path}  = file;
+
+            const result = await cloudinary.v2.uploader.upload(path)
+            const imgSchema = {
+                img_url: result.secure_url,
+                cloudinary_id: result.public_id
+            }
+            _imgs.push(imgSchema)
+
+        }
+        
+        new College({
+            name: name,
+            location: location,
+            address: address,
+            website: website,
+            images: _imgs
+
+        }).save().then(data => {
+            res.status(200).json({
+                message: "new College Added",
+                college: data
+            });
+        }).catch(err => {
+            res.send(err)
+        })
+
+    } catch (err) {
+        console.log(err);
+    }
+
+    
 });
 
 
@@ -120,6 +150,98 @@ router.put('/:cid', isAuth, async (req, res, next) => {
 
 
 // Delete Building from the List of building in the College Array
+
+//  delete  College image
+
+router.delete('/remove_image/:collegeId/:cloudinary_id', upload.array('image') ,async (req, res, next) => {
+    const image_id = req.params.cloudinary_id;  // cloudinary image id
+    const collegeId = req.params.collegeId
+    const college = await College.findById({_id: collegeId});
+
+    // delete image from the schema in the database
+
+    let images = college.images;
+    let newImagesArray;
+
+
+    if(image_id){
+        newImagesArray = images.filter(image => {
+            return image.cloudinary_id !== image_id
+        });
+        college.images = newImagesArray;
+
+        try {
+            await cloudinary.v2.uploader.destroy(image_id);
+            const result = await college.save();
+            res.json({
+                message: "image removed from the schema",
+                result
+            })
+        } catch (error) {
+            return res.send('error in saving', error)
+        }
+    }
+
+})
+
+
+// update college images 
+
+router.put('/images/:collegeId/:cloudinary_id', upload.single('image') ,async (req, res, next) => {
+    const image_id = req.params.cloudinary_id;  // cloudinary image id
+    const collegeId = req.params.collegeId
+    const college = await College.findById({_id: collegeId});
+
+    // delete image from the schema in the database
+
+    let images = college.images;
+    let newImagesArray;
+
+
+    if(image_id){
+        newImagesArray = images.filter(image => {
+            return image.cloudinary_id !== image_id
+        });
+        college.images = newImagesArray;
+
+        try {
+            await cloudinary.v2.uploader.destroy(image_id); // delete from cloudinary
+            await college.save(); // delete from database
+        } catch (error) {
+            return res.send('error in saving', error)
+        }
+    }
+
+     
+    if(req.file){  // save the new image here
+     
+        const result = await cloudinary.v2.uploader.upload(req.file.path)
+        const imgSchema = {
+            img_url: result.secure_url,
+            cloudinary_id: result.public_id
+        }
+        college.images = [...college.images, imgSchema]
+
+        try {
+            
+            const result = await college.save(); // delete from database
+            res.json({
+                message: "image updated ",
+                result
+            })
+        } catch (error) {
+            return res.send('error in saving', error)
+        }
+
+        
+    }
+
+    
+    
+})
+
+
+
 
 
 
