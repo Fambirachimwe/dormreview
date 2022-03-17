@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-import {reviewSchema} from './Review.js'
+import {reviewSchema} from './Review.js';
+import imageSchema from "../model/Image"
 
 
 //  this is for the college dorms here
@@ -8,7 +9,7 @@ import {reviewSchema} from './Review.js'
 const dormSchema = new Schema({  /// college dorms
     belongsTo: {type: Schema.Types.ObjectId, ref: 'Building'},
     name: String,
-    images: [{type: String, caption: String}],  // image url with caption
+    images: [imageSchema],  // image url with caption
     description: String,
     reviews: [reviewSchema]
 });

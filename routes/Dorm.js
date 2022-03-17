@@ -1,6 +1,11 @@
 import express from 'express';
 import Dorm from '../model/Dorm.js';
 import { isAuth } from '../util/IsAuth.js';
+import multer from "multer";
+import cloudinary from "../util/cloudinary.js"
+import fs from "fs";
+
+const upload = multer({ dest: 'uploads/' })
 
 
 const router = express.Router();
@@ -79,18 +84,42 @@ router.delete('/delete/:id', (req, res, next) => {
 
 
 
-router.post('/',(req, res,next) => {
-    const {belongsTo, name, images, description } = req.body
+router.post('/', upload.array('image') ,(req, res,next) => {
+    const {belongsTo, name, description } = req.body;
 
-    new Dorm({
-        belongsTo: belongsTo,
-        name: name,
-        images: images,
-        description: description
-    }).save()
-    .then(data => {
-        res.json(data)
-    }).catch(err => res.send(err))
+    const _imgs = [];
+    const files = req.files;
+
+    try {
+        for( const file of files){
+
+            const {path}  = file;
+
+            const result = await cloudinary.v2.uploader.upload(path)
+            const imgSchema = {
+                img_url: result.secure_url,
+                cloudinary_id: result.public_id
+            }
+            _imgs.push(imgSchema);
+            fs.unlinkSync(path);  // deleting the file from the server folder
+
+        }
+
+        new Dorm({
+            belongsTo: belongsTo,
+            name: name,
+            images: _imgs,
+            description: description
+        }).save()
+        .then(data => {
+            res.json(data)
+        }).catch(err => res.send(err))
+    } catch (err) {
+        console.log(err);
+    }
+
+
+    
 })
 
 
